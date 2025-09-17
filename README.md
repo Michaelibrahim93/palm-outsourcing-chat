@@ -22,7 +22,9 @@ We’re not migrating this legacy code to Flow/StateFlow right now because:
 - The priority is to deliver a hotfix for the crash and memory leak.
 - Using viewLifecycleOwner provides a safe and reliable fix in the short term.
 
+
 ## Code Review
+
 ### Observing LiveData
 ```kotlin
 // Current (unsafe, tied to Activity lifecycle)
@@ -52,6 +54,51 @@ viewLifecycleOwner safely binds LiveData to the Fragment’s view lifecycle.
 - Use `ListAdapter` with `DiffUtil` and `submitList()` inside the observer.
 - This ensures only the changed items are updated, improving performance and keeping code cleaner.
 - Search about `ListAdapter` vs `RecyclerView.Adapter` for more details.
+
+## Staged Refactor
+
+### Stage 0 — Identify Issues
+- Investigate **performance bottlenecks**, **crash root causes**, and **memory leaks**.
+- Introduce monitoring SDKs:
+    - [LeakCanary](https://square.github.io/leakcanary/) → detect memory leaks.
+    - Firebase Crashlytics → track and analyze crashes.
+    - Firebase Performance Monitoring → measure runtime performance.
+- Identify the application’s **critical path** to prioritize optimizations.
+- Monitor **screen loading times** on critical paths.
+- Detect **God classes** (Activities or Fragments containing too much logic).
+
+### Stage 1 — Quick Wins
+- Replace `RecyclerView.Adapter` with **`ListAdapter` + `DiffUtil`**, using `submitList()` inside observers.
+- Apply **memory leak fixes** and crash handling improvements.
+- Deliver small, high-impact performance improvements quickly.
+
+---
+### Iterative Rollout Strategy
+Stages 2–3 will be applied **incrementally per module/screen**.
+- Start with a **non-critical screen** (MVP).
+- Validate the approach and gather feedback.
+- Roll out gradually to critical modules/screens.
+---
+
+### Stage 2 — Enforce MVVM
+- Ensure **separation of concerns**:
+    - Business logic → `ViewModel` or use cases.
+    - UI logic → Activities/Fragments/Composables.
+### Stage 3 — Clean Architecture Alignment
+- Refactor **storage** and **network layers**:
+    - Use **separate models** for storage, network, and domain layers.
+- Reflect changes in the **repository implementation**.
+- Introduce **Use Cases** in the domain layer (e.g., `SendMessageUseCase`) to encapsulate user actions.
+### Stage 4 — Paging & Flow Migration
+- Migrate the **Chat screen** to **Paging 3**:
+    - Avoid loading thousands of messages into the RecyclerView adapter at once.
+    - Improve scrolling and memory performance.
+- Gradually migrate to **Flow/StateFlow**, since Paging 3 integrates more naturally with Flows.
+### Stage 5 — Multi-Module Architecture
+- Refactor the project into a **modular architecture**:
+    - Separate features into independent modules.
+    - Improve build times, reusability, and maintainability.
+
 
 ## Unit tests
 Please note:  
