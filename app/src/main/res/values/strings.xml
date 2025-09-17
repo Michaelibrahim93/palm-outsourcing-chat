@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">PalmOutsourcingTask</string>
-    <string name="action_settings">Settings</string>
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="chat_title">Chat</string>
-    <string name="to_chat">To Chat</string>
-</resources>
