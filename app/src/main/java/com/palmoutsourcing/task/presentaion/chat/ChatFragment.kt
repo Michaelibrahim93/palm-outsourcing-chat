@@ -32,7 +32,7 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
 
-        viewModel.messages.observe(viewLifecycleOwner) {
+        viewModel.messages.observe(requireActivity()) {
             binding.recyclerView.adapter = MessagesAdapter(it)
         }
     }
