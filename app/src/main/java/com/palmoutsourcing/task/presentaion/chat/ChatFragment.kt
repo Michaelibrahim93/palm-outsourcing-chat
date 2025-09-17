@@ -5,11 +5,13 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.palmoutsourcing.task.core.recyclerdecorators.VerticalSpaceDecorator
 import com.palmoutsourcing.task.databinding.FragmentChatBinding
+import org.jetbrains.annotations.TestOnly
 
 class ChatFragment : Fragment() {
     private var _binding: FragmentChatBinding? = null
@@ -30,7 +32,7 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
 
-        viewModel.messages.observe(requireActivity()) {
+        viewModel.messages.observe(viewLifecycleOwner) {
             binding.recyclerView.adapter = MessagesAdapter(it)
         }
     }
@@ -44,5 +46,11 @@ class ChatFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    //test methods
+    @TestOnly
+    internal fun getViewModelForTesting(): ChatViewModel {
+        return this.viewModel
     }
 }
