@@ -29,6 +29,7 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+
         viewModel.messages.observe(requireActivity()) {
             binding.recyclerView.adapter = MessagesAdapter(it)
         }
