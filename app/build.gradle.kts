@@ -36,6 +36,11 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    packaging {
+        resources {
+            excludes += arrayOf("META-INF/LICENSE.md", "META-INF/LICENSE-notice.md")
+        }
+    }
 }
 
 dependencies {
@@ -52,4 +57,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     debugImplementation(libs.fragment.testing.manifest)
     androidTestImplementation(libs.fragment.testing)
+    testImplementation(libs.mockito)
+    testImplementation(libs.mockito.core)
+    androidTestImplementation(libs.mockito.android)
 }

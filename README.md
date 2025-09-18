@@ -54,6 +54,7 @@ viewLifecycleOwner safely binds LiveData to the Fragment’s view lifecycle.
 - Use `ListAdapter` with `DiffUtil` and `submitList()` inside the observer.
 - This ensures only the changed items are updated, improving performance and keeping code cleaner.
 - Search about `ListAdapter` vs `RecyclerView.Adapter` for more details.
+(to encourage junior developers to search themselves about the best solutions)
 
 ## Staged Refactor
 
@@ -72,28 +73,30 @@ viewLifecycleOwner safely binds LiveData to the Fragment’s view lifecycle.
 - Apply **memory leak fixes** and crash handling improvements.
 - Deliver small, high-impact performance improvements quickly.
 
+### Stage 2 — Paging & Flow Migration
+- Migrate the **Chat screen** to **Paging 3**:
+  - Avoid loading thousands of messages into the RecyclerView adapter at once.
+  - Improve scrolling and memory performance.
+- Maybe Introduce **Flow/StateFlow**, since Paging 3 integrates more naturally with Flows.
+
 ---
 ### Iterative Rollout Strategy
-Stages 2–3 will be applied **incrementally per module/screen**.
-- Start with a **non-critical screen** (MVP).
+Stages 3–4 will be applied **incrementally per module/screen**.
+- Start with a **non-critical screen** as a POC.
 - Validate the approach and gather feedback.
 - Roll out gradually to critical modules/screens.
 ---
 
-### Stage 2 — Enforce MVVM
+### Stage 3 — Enforce MVVM
 - Ensure **separation of concerns**:
     - Business logic → `ViewModel` or use cases.
     - UI logic → Activities/Fragments/Composables.
-### Stage 3 — Clean Architecture Alignment
+### Stage 4 — Clean Architecture Alignment
 - Refactor **storage** and **network layers**:
     - Use **separate models** for storage, network, and domain layers.
 - Reflect changes in the **repository implementation**.
 - Introduce **Use Cases** in the domain layer (e.g., `SendMessageUseCase`) to encapsulate user actions.
-### Stage 4 — Paging & Flow Migration
-- Migrate the **Chat screen** to **Paging 3**:
-    - Avoid loading thousands of messages into the RecyclerView adapter at once.
-    - Improve scrolling and memory performance.
-- Gradually migrate to **Flow/StateFlow**, since Paging 3 integrates more naturally with Flows.
+
 ### Stage 5 — Multi-Module Architecture
 - Refactor the project into a **modular architecture**:
     - Separate features into independent modules.
