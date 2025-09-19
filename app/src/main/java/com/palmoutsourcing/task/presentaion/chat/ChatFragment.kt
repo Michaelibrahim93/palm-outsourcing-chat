@@ -5,18 +5,30 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.palmoutsourcing.task.core.recyclerdecorators.VerticalSpaceDecorator
+import com.palmoutsourcing.task.data.MessagesRepositoryImpl
 import com.palmoutsourcing.task.databinding.FragmentChatBinding
+import org.jetbrains.annotations.TestOnly
 
 class ChatFragment : Fragment() {
     private var _binding: FragmentChatBinding? = null
-
     private val binding get() = _binding!!
 
-    private val viewModel: ChatViewModel by viewModels()
+    private var viewModelFactory: ViewModelProvider.Factory? = null
+
+    private val viewModel: ChatViewModel by viewModels {
+        viewModelFactory ?: ChatViewModelFactory(MessagesRepositoryImpl())
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.loadMessages()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,7 +42,7 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
 
-        viewModel.messages.observe(requireActivity()) {
+        viewModel.messages.observe(viewLifecycleOwner) {
             binding.recyclerView.adapter = MessagesAdapter(it)
         }
     }
@@ -44,5 +56,16 @@ class ChatFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    //test methods
+    @TestOnly
+    internal fun getViewModelForTesting(): ChatViewModel {
+        return this.viewModel
+    }
+
+    @TestOnly
+    internal fun setFactory(factory: ViewModelProvider.Factory) {
+        this.viewModelFactory = factory
     }
 }
