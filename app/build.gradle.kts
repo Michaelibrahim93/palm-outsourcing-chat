@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.palmoutsourcing.task"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.palmoutsourcing.task"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -30,8 +32,12 @@ android {
         sourceCompatibility = JavaVersion.VERSION_18
         targetCompatibility = JavaVersion.VERSION_18
     }
-    kotlinOptions {
-        jvmTarget = "18"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_18)
+            freeCompilerArgs.add("-Xannotation-default-target=param-property")
+            freeCompilerArgs.add("-Xopt-in=kotlin.RequiresOptIn")
+        }
     }
     buildFeatures {
         viewBinding = true
@@ -39,6 +45,12 @@ android {
     packaging {
         resources {
             excludes += arrayOf("META-INF/LICENSE.md", "META-INF/LICENSE-notice.md")
+        }
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
         }
     }
 }
@@ -53,6 +65,15 @@ dependencies {
 
     //testing dependencies
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.androidx.espresso.core)
+    debugImplementation(libs.fragment.testing.manifest)
+    testImplementation(libs.fragment.testing)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.android)
+    testImplementation(libs.robolectric)
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+    //instrumental test
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     debugImplementation(libs.fragment.testing.manifest)
